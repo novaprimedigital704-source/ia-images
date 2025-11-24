@@ -1,23 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeniusCraft AI</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeniusCraft Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>GeniusCraft AI</h1>
-        <p class="subtitle">Your premium AI image generator</p>
-
-        <textarea id="prompt" placeholder="Describe your image..."></textarea>
-
-        <button onclick="generateImage()">Generate Image</button>
-
-        <div id="result"></div>
+<div class="container">
+  <header>
+    <h1>GeniusCraft Studio</h1>
+    <h2>Elite AI Image Creation</h2>
+    <p>Experience the next level of visual perfection powered by advanced AI.</p>
+  </header>
+  <main>
+    <div class="input-area">
+      <textarea id="userInput" placeholder="Ex: A majestic lion wearing a crown, cinematic lighting, ultra-detailed, fantasy"></textarea>
     </div>
-
-    <script src="script.js"></script>
+    <div class="styles-grid">
+      <button class="style-button" data-style="photorealistic">Photorealistic</button>
+      <button class="style-button" data-style="fantasy_art">Fantasy Art</button>
+      <button class="style-button" data-style="anime">Anime</button>
+      <button class="style-button" data-style="3d_model">3D Model</button>
+      <button class="style-button" data-style="cinematic">Cinematic</button>
+      <button class="style-button" data-style="cyberpunk">Cyberpunk</button>
+      <button class="style-button" data-style="pixel_art">Pixel Art</button>
+    </div>
+    <button id="createButton">Create Masterpiece</button>
+    <div class="output-area">
+      <textarea id="outputPrompt" readonly placeholder="Your masterpiece prompt will appear here..."></textarea>
+    </div>
+  </main>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
