@@ -1,23 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeniusCraft AI</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeniusCraft Studio</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>GeniusCraft AI</h1>
-        <p class="subtitle">Your premium AI image generator</p>
-
-        <textarea id="prompt" placeholder="Describe your image..."></textarea>
-
-        <button onclick="generateImage()">Generate Image</button>
-
-        <div id="result"></div>
+    <div class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <h1>GeniusCraft<br><span>Studio</span></h1>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <div class="main">
+        <div class="card">
+            <h2>Gerador de Imagens IA</h2>
+            <p class="description">Digite sua ideia e receba um prompt profissional.</p>
+
+            <textarea id="idea" placeholder="Descreva sua ideia..."></textarea>
+
+            <label class="label">Estilo da Imagem</label>
+            <select id="style">
+                <option>Realista Premium</option>
+                <option>Cyberpunk Neon</option>
+                <option>3D Ultra</option>
+                <option>Ilustração</option>
+                <option>Minimalista</option>
+            </select>
+
+            <button onclick="generatePrompt()">Gerar Prompt</button>
+
+            <div class="output" id="output"></div>
+        </div>
+    </div>
+
+<script src="script.js"></script>
 </body>
 </html>
