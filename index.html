@@ -1,41 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GeniusCraft Studio</title>
-    <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeniusCraft Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">⚡</div>
-            <h1>GeniusCraft<br><span>Studio</span></h1>
+<div class="container">
+    <header>
+        <h1>GeniusCraft Studio</h1>
+        <h2>Elite AI Image Creation</h2>
+        <p>Transform your ideas into stunning images instantly.</p>
+    </header>
+    <main>
+        <textarea id="userInput" placeholder="Digite sua ideia aqui..."></textarea>
+        <div class="styles-grid">
+            <button class="style-button" data-style="photorealistic">Photorealistic</button>
+            <button class="style-button" data-style="fantasy_art">Fantasy Art</button>
+            <button class="style-button" data-style="anime">Anime</button>
+            <button class="style-button" data-style="3d_model">3D Model</button>
+            <button class="style-button" data-style="cinematic">Cinematic</button>
+            <button class="style-button" data-style="cyberpunk">Cyberpunk</button>
+            <button class="style-button" data-style="pixel_art">Pixel Art</button>
         </div>
-    </div>
-
-    <div class="main">
-        <div class="card">
-            <h2>Gerador de Imagens IA</h2>
-            <p class="description">Digite sua ideia e receba um prompt profissional.</p>
-
-            <textarea id="idea" placeholder="Descreva sua ideia..."></textarea>
-
-            <label class="label">Estilo da Imagem</label>
-            <select id="style">
-                <option>Realista Premium</option>
-                <option>Cyberpunk Neon</option>
-                <option>3D Ultra</option>
-                <option>Ilustração</option>
-                <option>Minimalista</option>
-            </select>
-
-            <button onclick="generatePrompt()">Gerar Prompt</button>
-
-            <div class="output" id="output"></div>
+        <button id="createButton">Gerar Imagem</button>
+        <div class="output-area">
+            <textarea id="outputPrompt" readonly placeholder="Sua imagem aparecerá aqui..."></textarea>
+            <button id="copyButton">Copiar URL</button>
         </div>
-    </div>
-
+    </main>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
