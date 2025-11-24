@@ -1,10 +1,13 @@
-function generateImage() {
-    const prompt = document.getElementById("prompt").value;
+function generatePrompt() {
+    const idea = document.getElementById("idea").value;
+    const style = document.getElementById("style").value;
 
-    const result = document.getElementById("result");
-    result.innerHTML = "<p>Generating image...</p>";
+    if (!idea.trim()) {
+        document.getElementById("output").innerText = "Digite uma ideia primeiro.";
+        return;
+    }
 
-    setTimeout(() => {
-        result.innerHTML = `<img src="https://picsum.photos/600?random=${Math.random()}" />`;
-    }, 1500);
+    const prompt = A highly detailed, professional ${style} image. Description: ${idea}. 4K, ultra realistic lighting, cinematic depth.;
+
+    document.getElementById("output").innerText = prompt;
 }
