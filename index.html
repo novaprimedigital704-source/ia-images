@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>GeniusCraft Teste</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeniusCraft AI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h2>Teste IA GeniusCraft</h2>
-<input id="prompt" type="text" placeholder="Digite sua ideia aqui" style="width:300px;">
-<button onclick="gerar()">Gerar Imagem</button>
-<br><br>
-<img id="imagem" src="" alt="Sua imagem aparecerá aqui" width="400">
+    <div class="container">
+        <h1>GeniusCraft AI</h1>
+        <p class="subtitle">Your premium AI image generator</p>
 
-<script>
-async function gerar() {
-    const prompt = document.getElementById('prompt').value;
-    const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-    });
-    const data = await res.json();
-    if(data.imageUrl) {
-        document.getElementById('imagem').src = data.imageUrl;
-    } else {
-        alert('Erro: ' + (data.error || 'Algo deu errado'));
-    }
-}
-</script>
+        <textarea id="prompt" placeholder="Describe your image..."></textarea>
+
+        <button onclick="generateImage()">Generate Image</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
