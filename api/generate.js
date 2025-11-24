@@ -1,24 +1,34 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-export default async function handler(req, res){
-    if(req.method !== "POST") return res.status(405).json({ error: "Método não permitido" });
-
-    const { prompt, style } = req.body;
-    if(!prompt) return res.status(400).json({ error: "Prompt obrigatório" });
-
+export default async function handler(req, res) {
     try {
-        const finalPrompt = masterpiece, best quality, ultra-detailed, ${prompt}, style: ${style};
-        const result = await openai.images.generate({
-            model:"gpt-image-1",
+        const { prompt, style } = req.body;
+
+        const stylePrompts = {
+            photorealistic: ', photorealistic, 8k, sharp focus',
+            fantasy_art: ', fantasy art, epic, concept art',
+            anime: ', anime style, vibrant colors',
+            '3d_model': ', 3D model, Blender render, 4k',
+            cinematic: ', cinematic still, film grain',
+            cyberpunk: ', cyberpunk, neon lights',
+            pixel_art: ', pixel art, retro style'
+        };
+
+        const finalPrompt = masterpiece, best quality, ultra-detailed, ${prompt}${stylePrompts[style] || ''};
+
+        const response = await openai.images.generate({
+            model: "gpt-image-1",
             prompt: finalPrompt,
-            size:"1024x1024"
+            size: "1024x1024",
         });
-        res.status(200).json({ image_url: result.data[0].url });
-    } catch(err){
-        res.status(500).json({ error: err.message });
+
+        res.status(200).json({ imageUrl: response.data[0].url });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro ao gerar a imagem" });
     }
 }
