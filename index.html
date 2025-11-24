@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GeniusCraft Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeniusCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
     <header>
-        <h1>GeniusCraft Studio</h1>
+        <div class="logo">
+            <img src="logo.png" alt="GeniusCraft Studio">
+            <h1>GeniusCraft Studio</h1>
+        </div>
         <h2>Elite AI Image Creation</h2>
-        <p>Transform your ideas into stunning images instantly.</p>
     </header>
     <main>
         <textarea id="userInput" placeholder="Digite sua ideia aqui..."></textarea>
@@ -26,12 +26,8 @@
             <button class="style-button" data-style="pixel_art">Pixel Art</button>
         </div>
         <button id="createButton">Gerar Imagem</button>
-        <div class="output-area">
-            <textarea id="outputPrompt" readonly placeholder="Sua imagem aparecerá aqui..."></textarea>
-            <button id="copyButton">Copiar URL</button>
-        </div>
+        <textarea id="outputPrompt" readonly placeholder="Seu prompt aparecerá aqui..."></textarea>
     </main>
-</div>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
