@@ -9,7 +9,6 @@
             --background-color: #121212;
             --surface-color: #1e1e1e;
             --primary-color: #bb86fc;
-            --primary-variant-color: #3700b3;
             --secondary-color: #03dac6;
             --text-color: #ffffff;
             --text-secondary-color: #b3b3b3;
@@ -18,7 +17,7 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             display: flex;
@@ -33,15 +32,16 @@
             background-color: var(--surface-color);
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border-color);
         }
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 24px; }
         .logo { width: 40px; height: 40px; }
         .header-text h1 { font-size: 1.5rem; font-weight: 600; }
         .header-text p { font-size: 0.9rem; color: var(--text-secondary-color); }
+
         .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary-color); }
+        label { margin-bottom: 8px; display: block; color: var(--text-secondary-color); }
+
         .prompt-input {
             width: 100%;
             background-color: #2c2c2c;
@@ -49,213 +49,63 @@
             border-radius: 8px;
             padding: 12px;
             color: var(--text-color);
-            font-size: 1rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        .prompt-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.2); }
+
         .style-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
         .style-button {
             flex-grow: 1;
-            padding: 10px 15px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            padding: 10px;
             background-color: #333;
-            color: var(--text-secondary-color);
             border: 1px solid var(--border-color);
             border-radius: 20px;
+            color: var(--text-secondary-color);
             cursor: pointer;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
-        .style-button:hover { background-color: #444; color: var(--text-color); }
         .style-button.active {
             background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
             color: #000;
-            border-color: transparent;
-            font-weight: 700;
+            font-weight: bold;
         }
+
         .generate-button {
             width: 100%;
             padding: 15px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #000;
+            margin-top: 15px;
             background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.3s;
-            margin-top: 20px;
+            font-weight: bold;
         }
-        .generate-button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(187, 134, 252, 0.3); }
-        #result-container { margin-top: 24px; display: none; }
-        #generated-image { width: 100%; border-radius: 8px; margin-bottom: 16px; border: 1px solid var(--border-color); display: none; }
+
+        #loader { display: none; text-align: center; padding: 20px 0; }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.2);
+            border-left-color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #result-container { display: none; margin-top: 20px; }
+        #generated-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
         #prompt-output {
             width: 100%;
             background-color: #2c2c2c;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            color: var(--text-secondary-color);
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.85rem;
-            resize: none;
-        }
-        .copy-button {
-            width: 100%;
             padding: 10px;
-            margin-top: 10px;
-            background-color: #333;
-            color: var(--text-secondary-color);
-            border: 1px solid var(--border-color);
             border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            color: var(--text-secondary-color);
+            font-family: monospace;
         }
-        .copy-button:hover { background-color: #444; }
-        #loader { display: none; text-align: center; padding: 40px 0; }
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-left-color: var(--primary-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        #loader p { font-size: 1rem; color: var(--text-secondary-color); }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="logo.svg" alt="Logo GeniusCraft" class="logo">
-            <div class="header-text">
-                <h1>GeniusCraft Studio</h1>
-                <p>Sua vitrine de potencial em IA de elite</p>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="prompt-input">Descreva a imagem que você deseja criar</label>
-            <input type="text" id="prompt-input" class="prompt-input" placeholder="Ex: um dragão dourado em uma montanha de neve">
-        </div>
-        <div class="form-group">
-            <label>Escolha um estilo</label>
-            <div class="style-buttons">
-                <button class="style-button active" data-style="Fotorealista">Fotorealista</button>
-                <button class="style-button" data-style="Arte Fantasia">Arte Fantasia</button>
-                <button class="style-button" data-style="Anime">Anime</button>
-                <button class="style-button" data-style="Modelo 3D">Modelo 3D</button>
-                <button class="style-button" data-style="Cinematográfico">Cinematográfico</button>
-                <button class="style-button" data-style="Cyberpunk">Cyberpunk</button>
-                <button class="style-button" data-style="Arte em Pixel">Arte em Pixel</button>
-            </div>
-        </div>
-        <button class="generate-button" id="generate-button">Gerar Imagem</button>
-        <div id="loader">
-            <div class="spinner"></div>
-            <p>Gerando sua obra-prima...</p>
-        </div>
-        <div id="result-container">
-            <img id="generated-image" src="" alt="Imagem gerada por IA">
-            <textarea id="prompt-output" rows="3" readonly></textarea>
-            <button class="copy-button" id="copy-button">Copiar Prompt</button>
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const generateButton = document.getElementById('generate-button');
-            const copyButton = document.getElementById('copy-button');
-            const styleButtons = document.querySelectorAll('.style-button');
 
-            styleButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    styleButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                });
-            });
-
-            if (generateButton) {
-                generateButton.addEventListener('click', generateImage);
-            }
-
-            if (copyButton) {
-                copyButton.addEventListener('click', () => {
-                    const promptOutput = document.getElementById('prompt-output');
-                    promptOutput.select();
-                    document.execCommand('copy');
-                    copyButton.textContent = 'Copiado!';
-                    setTimeout(() => {
-                        copyButton.textContent = 'Copiar Prompt';
-                    }, 2000);
-                });
-            }
-        });
-
-        function generateImage() {
-            const promptInput = document.getElementById('prompt-input');
-            const promptText = promptInput.value;
-            const activeButtonStyle = document.querySelector('.style-button.active')?.dataset.style || 'estilo padrão';
-
-            if (!promptText) {
-                alert('Por favor, digite um prompt para gerar a imagem.');
-                return;
-            }
-
-            const professionalPrompt = masterpiece, best quality, ultra-detailed, ${activeButtonStyle} style, ${promptText};
-            document.getElementById('prompt-output').value = professionalPrompt;
-
-            const loader = document.getElementById('loader');
-            const resultContainer = document.getElementById('result-container');
-            const imageElement = document.getElementById('generated-image');
-            const generateButton = document.getElementById('generate-button');
-
-            loader.style.display = 'block';
-            generateButton.style.display = 'none';
-            resultContainer.style.display = 'none';
-            imageElement.style.display = 'none';
-
-            fetch('/api/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: professionalPrompt }),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        if (response.status === 503) {
-                           throw new Error('O modelo de IA está "acordando". Tente de novo em 30s.');
-                        }
-                        throw new Error(err.error || 'Erro desconhecido no servidor.');
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.imageUrl) {
-                    imageElement.src = data.imageUrl;
-                    imageElement.style.display = 'block';
-                    resultContainer.style.display = 'block';
-                } else {
-                    throw new Error('A resposta da API não continha uma URL de imagem.');
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao gerar imagem:', error);
-                const resultP = document.createElement('p');
-                resultP.textContent = Falha ao gerar imagem: ${error.message};
-                resultP.style.color = 'var(--error-color)';
-                resultP.style.textAlign = 'center';
-                resultP.style.padding = '20px 0';
-                resultContainer.innerHTML = ''; // Limpa qualquer conteúdo anterior
-                resultContainer.appendChild(resultP);
-                resultContainer.style.display = 'block';
-            })
-            .finally(() => {
-                loader.style.display = 'none';
-                generateButton.style.display = 'block';
-            });
-        }
-    </script>
-</body>
-</html>
+        .copy-button {
