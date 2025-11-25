@@ -1,37 +1,35 @@
-const generateBtn = document.getElementById('generateBtn');
-const promptInput = document.getElementById('prompt');
-const resultImage = document.getElementById('resultImage');
+document.addEventListener('DOMContentLoaded', () => {
+    const generateButton = document.getElementById('generateButton');
+    const userInput = document.getElementById('userInput');
+    const outputPrompt = document.getElementById('outputPrompt');
+    const styleButtons = document.querySelectorAll('.style-button');
 
-generateBtn.addEventListener('click', async () => {
-  const prompt = promptInput.value.trim();
-  if (!prompt) {
-    alert('Digite uma ideia para gerar a imagem!');
-    return;
-  }
+    let selectedStyle = 'Fotorealista'; // Estilo padrão
 
-  resultImage.src = ''; // Limpa imagem anterior
-  generateBtn.textContent = 'Gerando...';
-  generateBtn.disabled = true;
-
-  try {
-    const response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
+    styleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            styleButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedStyle = button.dataset.style;
+        });
     });
 
-    const data = await response.json();
+    if (generateButton) {
+        generateButton.addEventListener('click', async () => {
+            const userIdea = userInput.value;
+            if (!userIdea) {
+                alert('Por favor, descreva sua ideia.');
+                return;
+            }
 
-    if (data.imageUrl) {
-      resultImage.src = data.imageUrl;
+            // Simula a criação do prompt profissional
+            const professionalPrompt = masterpiece, best quality, ultra-detailed, ${selectedStyle}, ${userIdea};
+            outputPrompt.value = professionalPrompt;
+
+            // Aqui viria a chamada para a API de imagem
+            // Por enquanto, apenas mostramos o prompt
+        });
     } else {
-      alert('Erro ao gerar a imagem.');
+        console.error('Botão de gerar não encontrado.');
     }
-  } catch (err) {
-    console.error(err);
-    alert('Erro ao gerar a imagem.');
-  } finally {
-    generateBtn.textContent = 'Gerar Imagem';
-    generateBtn.disabled = false;
-  }
 });
