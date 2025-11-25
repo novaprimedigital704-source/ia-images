@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('userInput');
     const styleButtons = document.querySelectorAll('.style-button');
     
-    // Novos elementos da área de resultado
     const resultArea = document.getElementById('resultArea');
     const loader = document.getElementById('loader');
     const imageContainer = document.getElementById('imageContainer');
@@ -12,21 +11,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputPrompt = document.getElementById('outputPrompt');
     const copyButton = document.getElementById('copyButton');
 
+    // --- 2. LÓGICA CORRIGIDA PARA SELEÇÃO DE ESTILO ---
     let selectedStyle = 'Fotorealista'; // Estilo padrão inicial
 
-    // --- 2. LÓGICA PARA SELEÇÃO DE ESTILO ---
     styleButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove a classe 'active' de todos os botões
-            styleButtons.forEach(btn => btn.classList.remove('active'));
-            // Adiciona a classe 'active' ao botão clicado
-            button.classList.add('active');
-            // Atualiza o estilo selecionado
-            selectedStyle = button.dataset.style;
+        button.addEventListener('click', (event) => {
+            // Remove a classe 'active' de TODOS os botões
+            styleButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Adiciona a classe 'active' APENAS ao botão que foi clicado
+            const clickedButton = event.currentTarget;
+            clickedButton.classList.add('active');
+            
+            // Atualiza o estilo selecionado com base no atributo 'data-style' do botão clicado
+            selectedStyle = clickedButton.dataset.style;
         });
     });
 
-    // --- 3. A MÁGICA DA SIMULAÇÃO AO CLICAR EM "GERAR IMAGEM" ---
+    // --- 3. A MÁGICA DA SIMULAÇÃO ---
     generateButton.addEventListener('click', () => {
         const userIdea = userInput.value;
         if (!userIdea) {
@@ -34,26 +38,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Mostra a área de resultado e a animação de loading
         resultArea.classList.remove('hidden');
         loader.classList.remove('hidden');
-        imageContainer.classList.add('hidden'); // Esconde a imagem anterior, se houver
+        imageContainer.classList.add('hidden');
 
-        // Simula o tempo de processamento da IA (3 segundos)
         setTimeout(() => {
-            // Monta o prompt profissional
             const professionalPrompt = masterpiece, best quality, ultra-detailed, ${selectedStyle} style, ${userIdea};
             
-            // Define a imagem de demonstração e o prompt final
-            generatedImage.src = 'https://i.imgur.com/8p5g2cW.png'; // URL da nossa imagem de demonstração
+            generatedImage.src = 'https://i.imgur.com/8p5g2cW.png';
             outputPrompt.value = professionalPrompt;
 
-            // Esconde a animação de loading
             loader.classList.add('hidden' );
-            // Mostra o container da imagem
             imageContainer.classList.remove('hidden');
 
-        }, 3000); // 3000 milissegundos = 3 segundos
+        }, 3000);
     });
 
     // --- 4. FUNCIONALIDADE DO BOTÃO "COPIAR PROMPT" ---
@@ -63,6 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         copyButton.textContent = 'Copiado!';
         setTimeout(() => {
             copyButton.textContent = 'Copiar Prompt';
-        }, 2000); // Volta ao texto original depois de 2 segundos
+        }, 2000);
     });
 });
