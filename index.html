@@ -4,174 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeniusCraft Studio</title>
-
-    <style>
-        :root {
-            --background-color: #121212;
-            --surface-color: #1e1e1e;
-            --primary-color: #bb86fc;
-            --secondary-color: #03dac6;
-            --text-color: #ffffff;
-            --text-secondary-color: #b3b3b3;
-            --border-color: #333333;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 600px;
-            background-color: var(--surface-color);
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid var(--border-color);
-        }
-
-        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 24px; }
-        .logo { width: 40px; }
-        .header-text h1 { font-size: 1.5rem; font-weight: 600; }
-        .header-text p { font-size: 0.9rem; color: var(--text-secondary-color); }
-
-        .form-group { margin-bottom: 20px; }
-        label { margin-bottom: 8px; display: block; color: var(--text-secondary-color); }
-
-        .prompt-input {
-            width: 100%;
-            background-color: #2c2c2c;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            color: var(--text-color);
-        }
-
-        .style-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
-        .style-button {
-            flex-grow: 1;
-            padding: 10px;
-            background-color: #333;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            color: var(--text-secondary-color);
-            cursor: pointer;
-        }
-        .style-button.active {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            color: #000;
-            font-weight: bold;
-        }
-
-        .generate-button {
-            width: 100%;
-            padding: 15px;
-            margin-top: 15px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        #loader { display: none; text-align: center; padding: 20px 0; }
-        .spinner {
-            border: 4px solid rgba(255,255,255,0.2);
-            border-left-color: var(--primary-color);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        #result-container { display: none; margin-top: 20px; }
-        #generated-image {
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: none;
-        }
-
-        #prompt-output {
-            width: 100%;
-            background-color: #2c2c2c;
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 8px;
-            color: var(--text-secondary-color);
-            font-family: monospace;
-        }
-
-        /* AQUI estava cortado — agora está completo */
-        .copy-button {
-            width: 100%;
-            margin-top: 10px;
-            padding: 12px;
-            background-color: #333;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--text-secondary-color);
-            transition: 0.2s;
-        }
-
-        .copy-button:hover {
-            background-color: #444;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
     <div class="container">
 
-        <div class="header">
+        <header>
             <img src="logo.png" class="logo" alt="Logo">
-            <div class="header-text">
-                <h1>GeniusCraft Studio</h1>
-                <p>Gere imagens profissionais com IA</p>
+            <h1>GeniusCraft Studio</h1>
+            <p>Crie imagens profissionais usando IA</p>
+        </header>
+
+        <!-- Entrada do usuário -->
+        <textarea id="userInput" placeholder="Descreva sua ideia aqui..."></textarea>
+
+        <!-- Botões de estilo -->
+        <div class="styles-grid">
+            <button class="style-button active" data-style="Fotorealista">Fotorealista</button>
+            <button class="style-button" data-style="Anime">Anime</button>
+            <button class="style-button" data-style="Pintura a óleo">Pintura a Óleo</button>
+            <button class="style-button" data-style="Arte Digital">Arte Digital</button>
+        </div>
+
+        <!-- Botão para gerar -->
+        <button id="generateButton">Gerar Imagem</button>
+
+        <!-- Área de resultado -->
+        <div id="resultArea" class="output-area hidden">
+
+            <!-- Loader -->
+            <div id="loader" class="loader-container hidden">
+                <div class="spinner"></div>
+                <p>Gerando imagem...</p>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="userInput">Descreva a ideia da imagem:</label>
-            <textarea id="userInput" class="prompt-input" placeholder="Ex: Um castelo futurista nas nuvens"></textarea>
-        </div>
-
-        <div class="form-group">
-            <label>Selecione o estilo:</label>
-            <div class="style-buttons">
-                <button class="style-button active" data-style="Fotorealista">Fotorealista</button>
-                <button class="style-button" data-style="Anime">Anime</button>
-                <button class="style-button" data-style="Pintura a óleo">Pintura a óleo</button>
-                <button class="style-button" data-style="Arte Digital">Arte Digital</button>
+            <!-- Container da imagem -->
+            <div id="imageContainer" class="hidden">
+                <img id="generatedImage" alt="Imagem gerada">
             </div>
-        </div>
 
-        <button id="generateButton" class="generate-button">Gerar Imagem</button>
+            <!-- Prompt gerado -->
+            <textarea id="outputPrompt" readonly></textarea>
 
-        <div id="loader">
-            <div class="spinner"></div>
-            <p>Gerando imagem...</p>
-        </div>
+            <!-- Botão copiar -->
+            <button id="copyButton">Copiar Prompt</button>
 
-        <div id="result-container">
-            <img id="generated-image" alt="Imagem gerada">
-            <textarea id="prompt-output" readonly></textarea>
-            <button id="copyButton" class="copy-button">Copiar Prompt</button>
         </div>
 
     </div>
 
     <script src="script.js"></script>
+
 </body>
 </html>
