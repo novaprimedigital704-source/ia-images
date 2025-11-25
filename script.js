@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let selectedStyle = 'Fotorealista';
 
+    // Seleção de estilos
     styleButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
+        button.addEventListener('click', event => {
             styleButtons.forEach(btn => btn.classList.remove('active'));
             const clickedButton = event.currentTarget;
             clickedButton.classList.add('active');
@@ -20,9 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // -----------------------------
+    // GERAR IMAGEM
+    // -----------------------------
     generateButton.addEventListener('click', async () => {
         const userIdea = userInput.value.trim();
-        if (!userIdea) return alert('Por favor, descreva sua ideia antes de gerar a imagem.');
+        if (!userIdea)
+            return alert('Por favor, descreva sua ideia antes de gerar a imagem.');
 
         const professionalPrompt = `masterpiece, best quality, ultra-detailed, ${selectedStyle} style, ${userIdea}`;
         outputPrompt.value = professionalPrompt;
@@ -39,21 +44,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-            if (data.error) throw new Error(data.error);
 
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            // 🔥 AQUI ESTÁ O AJUSTE IMPORTANTE:
+            // Agora o backend envia base64, então é só aplicar:
             generatedImage.src = data.imageUrl;
+
             loader.classList.add('hidden');
             imageContainer.classList.remove('hidden');
+
         } catch (error) {
             loader.classList.add('hidden');
             alert('Erro ao gerar a imagem: ' + error.message);
         }
     });
 
+    // COPIAR PROMPT
     copyButton.addEventListener('click', () => {
         outputPrompt.select();
         document.execCommand('copy');
         copyButton.textContent = 'Copiado!';
-        setTimeout(() => { copyButton.textContent = 'Copiar Prompt'; }, 2000);
+        setTimeout(() => {
+            copyButton.textContent = 'Copiar Prompt';
+        }, 2000);
     });
 });
