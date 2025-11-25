@@ -1,10 +1,4 @@
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // defina na Vercel
-});
-
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método não permitido." });
   }
@@ -16,27 +10,40 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "O prompt é obrigatório." });
     }
 
-    // 🔥 Geração de imagem com o modelo correto
-    const response = await client.images.generate({
-      model: "gpt-image-1", // modelo correto
-      prompt: prompt,
-      size: "1024x1024"
-    });
+    const hfToken = process.env.HUGGINGFACE_TOKEN;
 
-    // 📌 A imagem agora vem como Base64
-    const imageBase64 = response.data[0].b64_json;
-
-    if (!imageBase64) {
-      throw new Error("A API não retornou imagem.");
+    if (!hfToken) {
+      return res.status(500).json({ error: "HUGGINGFACE_TOKEN não configurado." });
     }
 
-    // 🔗 URL para exibir no frontend
-    const imageUrl = `data:image/png;base64,${imageBase64}`;
+    // Modelo que vamos usar (recomendo FLUX)
+    const model = "black-forest-labs/FLUX.1-schnell";
+
+    // Chamando a Inference API da HuggingFace
+    const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${hfToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ inputs: prompt })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error("Falha na API HuggingFace: " + errorText);
+    }
+
+    // A imagem vem como um blob binário
+    const arrayBuffer = await response.arrayBuffer();
+    const base64Image = Buffer.from(arrayBuffer).toString("base64");
+
+    const imageUrl = `data:image/png;base64,${base64Image}`;
 
     return res.status(200).json({ imageUrl });
 
   } catch (error) {
     console.error("Erro no backend:", error);
-    return res.status(500).json({ error: "Erro ao gerar a imagem." });
+    return res.status(500).json({ error: error.message });
   }
-}
+};
