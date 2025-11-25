@@ -1,39 +1,33 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const userInput = document.getElementById('userInput');
-    const styleButtons = document.querySelectorAll('.style-button');
-    const createButton = document.getElementById('createButton');
-    const outputPrompt = document.getElementById('outputPrompt');
+const generateBtn = document.getElementById("generateBtn");
+const promptInput = document.getElementById("prompt");
+const resultImg = document.getElementById("generatedImage");
 
-    let selectedStyle = null;
+generateBtn.addEventListener("click", async () => {
+  const prompt = promptInput.value.trim();
+  if (!prompt) return alert("Digite algo para gerar a imagem!");
 
-    styleButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            styleButtons.forEach(b => b.classList.remove('active'));
-            button.classList.add('active');
-            selectedStyle = button.dataset.style;
-        });
+  generateBtn.disabled = true;
+  generateBtn.innerText = "Gerando...";
+
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
     });
 
-    createButton.addEventListener('click', async () => {
-        const prompt = userInput.value.trim();
-        if(!prompt || !selectedStyle) return alert("Digite sua ideia e escolha um estilo!");
+    const data = await response.json();
+    if (data.imageUrl) {
+      resultImg.src = data.imageUrl;
+    } else {
+      alert("Erro ao gerar imagem.");
+      console.error(data);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao se comunicar com o backend.");
+  }
 
-        outputPrompt.value = "Gerando imagem...";
-        try {
-            const res = await fetch('/api/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt, style: selectedStyle })
-            });
-            const data = await res.json();
-            if(data.imageUrl) {
-                outputPrompt.value = data.imageUrl;
-            } else {
-                outputPrompt.value = "Erro ao gerar imagem!";
-            }
-        } catch(err) {
-            outputPrompt.value = "Erro ao gerar imagem!";
-            console.error(err);
-        }
-    });
+  generateBtn.disabled = false;
+  generateBtn.innerText = "Gerar Imagem";
 });
