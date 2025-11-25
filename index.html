@@ -1,22 +1,38 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeniusCraft Studio</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeniusCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <h1>GeniusCraft Studio</h1>
-    <div class="input-area">
-      <input type="text" id="prompt" placeholder="Digite sua ideia aqui...">
-      <button id="generateBtn">Gerar Imagem</button>
+    <div class="container">
+        <header>
+            <img src="logo.svg" alt="Logo GeniusCraft Studio" class="logo">
+            <h1>GeniusCraft Studio</h1>
+            <p>Criação de imagens de IA de elite</p>
+        </header>
+        <main>
+            <textarea id="userInput" placeholder="Descreva sua ideia..."></textarea>
+            <div class="styles-grid">
+                <button class="style-button" data-style="Fotorealista">Fotorealista</button>
+                <button class="style-button" data-style="Arte Fantasia">Arte Fantasia</button>
+                <button class="style-button" data-style="Anime">Anime</button>
+                <button class="style-button" data-style="Modelo 3D">Modelo 3D</button>
+                <button class="style-button" data-style="Cinematográfico">Cinematográfico</button>
+                <button class="style-button" data-style="Cyberpunk">Cyberpunk</button>
+                <button class="style-button" data-style="Arte em Pixel">Arte em Pixel</button>
+            </div>
+            <button id="generateButton">Gerar Imagem</button>
+            <div class="output-area">
+                <textarea id="outputPrompt" readonly placeholder="Seu prompt profissional aparecerá aqui..."></textarea>
+            </div>
+        </main>
     </div>
-    <div class="result-area">
-      <img id="resultImage" src="" alt="Sua imagem aparecerá aqui">
-    </div>
-  </div>
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
