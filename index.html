@@ -48,6 +48,86 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <!-- ========================= -->
+    <!--     SCRIPT CORRIGIDO      -->
+    <!-- ========================= -->
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const generateButton = document.getElementById('generateButton');
+        const userInput = document.getElementById('userInput');
+        const styleButtons = document.querySelectorAll('.style-button');
+        const resultArea = document.getElementById('resultArea');
+        const loader = document.getElementById('loader');
+        const imageContainer = document.getElementById('imageContainer');
+        const generatedImage = document.getElementById('generatedImage');
+        const outputPrompt = document.getElementById('outputPrompt');
+        const copyButton = document.getElementById('copyButton');
+
+        let selectedStyle = 'Fotorealista';
+
+        // Escolha dos estilos
+        styleButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                styleButtons.forEach(btn => btn.classList.remove('active'));
+                const clickedButton = event.currentTarget;
+                clickedButton.classList.add('active');
+                selectedStyle = clickedButton.dataset.style;
+            });
+        });
+
+        // Botão de gerar
+        generateButton.addEventListener('click', async () => {
+            const userIdea = userInput.value.trim();
+            if (!userIdea) return alert('Por favor, descreva sua ideia antes de gerar a imagem.');
+
+            const professionalPrompt = masterpiece, best quality, ultra-detailed, ${selectedStyle} style, ${userIdea};
+            outputPrompt.value = professionalPrompt;
+
+            resultArea.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            imageContainer.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: professionalPrompt })
+                });
+
+                // --- Correção obrigatória ---
+                if (!response.ok) {
+                    const errorBody = await response.json().catch(() => ({}));
+                    throw new Error(errorBody.error || "Erro desconhecido no servidor.");
+                }
+
+                const data = await response.json();
+
+                if (!data.imageUrl) {
+                    throw new Error("O backend não retornou a URL da imagem.");
+                }
+
+                // * CORREÇÃO FINAL *
+                generatedImage.src = data.imageUrl;
+
+                loader.classList.add('hidden');
+                imageContainer.classList.remove('hidden');
+
+            } catch (error) {
+                loader.classList.add('hidden');
+                alert("Falha ao gerar imagem: " + error.message);
+            }
+        });
+
+        // Copiar prompt
+        copyButton.addEventListener('click', () => {
+            outputPrompt.select();
+            document.execCommand('copy');
+            copyButton.textContent = 'Copiado!';
+            setTimeout(() => { copyButton.textContent = 'Copiar Prompt'; }, 2000);
+        });
+    });
+    </script>
+
 </body>
 </html>
