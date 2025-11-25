@@ -16,8 +16,8 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: "HUGGINGFACE_TOKEN não configurado." });
         }
 
-        // 🔥 Modelo estável e compatível
-        const MODEL = "stabilityai/sdxl-turbo";
+        // 🔥 MODELO GRATUITO QUE FUNCIONA
+        const MODEL = "stabilityai/stable-diffusion-xl-base-1.0";
 
         const response = await fetch(
             `https://api-inference.huggingface.co/models/${MODEL}`,
@@ -27,18 +27,17 @@ export default async function handler(req, res) {
                     Authorization: `Bearer ${HF_TOKEN}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    inputs: prompt
-                })
+                body: JSON.stringify({ inputs: prompt })
             }
         );
 
-        // Recebe imagem como bytes
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        if (!response.ok) {
+            const errorTxt = await response.text();
+            throw new Error("Erro da HuggingFace: " + errorTxt);
+        }
 
-        // Converte para base64
-        const base64 = buffer.toString("base64");
+        const arrayBuffer = await response.arrayBuffer();
+        const base64 = Buffer.from(arrayBuffer).toString("base64");
 
         return res.status(200).json({
             imageUrl: `data:image/png;base64,${base64}`
