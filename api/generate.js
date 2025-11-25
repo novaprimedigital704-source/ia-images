@@ -16,32 +16,40 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: "HUGGINGFACE_TOKEN não configurado." });
         }
 
-        // 🔥 MODELO GRATUITO QUE FUNCIONA
-        const MODEL = "stabilityai/stable-diffusion-xl-base-1.0";
+        // Modelo grátis
+        const MODEL = "black-forest-labs/FLUX.1-schnell";
 
         const response = await fetch(
-            `https://api-inference.huggingface.co/models/${MODEL}`,
+            `https://router.huggingface.co/hf-inference/models/${MODEL}`,
             {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${HF_TOKEN}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ inputs: prompt })
+                body: JSON.stringify({
+                    inputs: prompt
+                })
             }
         );
 
-        if (!response.ok) {
-            const errorTxt = await response.text();
-            throw new Error("Erro da HuggingFace: " + errorTxt);
+        // Caso a API retorne erro em JSON
+        const contentType = response.headers.get("content-type");
+
+        if (contentType && contentType.includes("application/json")) {
+            const errorData = await response.json();
+            throw new Error("Erro da HuggingFace: " + JSON.stringify(errorData));
         }
 
+        // Recebe a imagem como binário
         const arrayBuffer = await response.arrayBuffer();
-        const base64 = Buffer.from(arrayBuffer).toString("base64");
+        const buffer = Buffer.from(arrayBuffer);
 
-        return res.status(200).json({
-            imageUrl: `data:image/png;base64,${base64}`
-        });
+        // Converte para BASE64
+        const base64 = buffer.toString("base64");
+        const imageUrl = `data:image/png;base64,${base64}`;
+
+        return res.status(200).json({ imageUrl });
 
     } catch (error) {
         console.error("Erro no backend:", error);
