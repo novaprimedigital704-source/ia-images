@@ -1,33 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeniusCraft Studio</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeniusCraft Studio</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="logo.png" alt="GeniusCraft Studio">
-            <h1>GeniusCraft Studio</h1>
-        </div>
-        <h2>Elite AI Image Creation</h2>
-    </header>
-    <main>
-        <textarea id="userInput" placeholder="Digite sua ideia aqui..."></textarea>
-        <div class="styles-grid">
-            <button class="style-button" data-style="photorealistic">Photorealistic</button>
-            <button class="style-button" data-style="fantasy_art">Fantasy Art</button>
-            <button class="style-button" data-style="anime">Anime</button>
-            <button class="style-button" data-style="3d_model">3D Model</button>
-            <button class="style-button" data-style="cinematic">Cinematic</button>
-            <button class="style-button" data-style="cyberpunk">Cyberpunk</button>
-            <button class="style-button" data-style="pixel_art">Pixel Art</button>
-        </div>
-        <button id="createButton">Gerar Imagem</button>
-        <textarea id="outputPrompt" readonly placeholder="Seu prompt aparecerá aqui..."></textarea>
-    </main>
-    <script src="script.js"></script>
+  <header>
+    <div class="logo-container">
+      <img src="logo.png" alt="GeniusCraft Studio" class="logo">
+      <h1>GeniusCraft Studio</h1>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard">
+      <textarea id="prompt" placeholder="Digite sua ideia aqui"></textarea>
+      <button id="generateBtn">Gerar Imagem</button>
+      <div id="result">
+        <img id="generatedImage" src="" alt="">
+      </div>
+    </div>
+  </main>
+
+<script src="script.js"></script>
 </body>
 </html>
