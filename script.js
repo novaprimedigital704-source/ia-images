@@ -48,8 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.error) throw new Error(data.error);
 
-            // Ajuste conforme sua API retorna: data.img (base64) ou data.url
-            generatedImage.src = data.img || data.url;
+            // Usa a URL retornada pela sua API
+            generatedImage.src = data.imageUrl;
 
             loader.classList.add('hidden');
             imageContainer.classList.remove('hidden');
