@@ -1,26 +1,29 @@
+// api/generate.js
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // pega a chave do ambiente
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export default async function handler(req, res) {
   try {
+    // Pega o prompt enviado pelo frontend
     const { prompt } = req.body;
-
     if (!prompt) {
       return res.status(400).json({ error: "Prompt é obrigatório" });
     }
 
+    // Gera a imagem usando a API da OpenAI
     const response = await openai.images.generate({
       model: "gpt-image-1",
-      prompt: prompt,
+      prompt,
       size: "1024x1024",
     });
 
+    // Retorna a URL da imagem
     res.status(200).json({ imageUrl: response.data[0].url });
   } catch (error) {
-    console.error(error);
+    console.error("Erro no backend:", error);
     res.status(500).json({ error: "Erro ao gerar imagem. Verifique o backend." });
   }
 }
