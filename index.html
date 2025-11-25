@@ -17,9 +17,9 @@
             <p>Criação de imagens de IA de elite</p>
         </header>
         <main>
-            <textarea id="userInput" placeholder="Descreva sua ideia..."></textarea>
+            <textarea id="userInput" placeholder="Descreva sua ideia... Ex: um lobo com armadura neon"></textarea>
             <div class="styles-grid">
-                <button class="style-button" data-style="Fotorealista">Fotorealista</button>
+                <button class="style-button active" data-style="Fotorealista">Fotorealista</button>
                 <button class="style-button" data-style="Arte Fantasia">Arte Fantasia</button>
                 <button class="style-button" data-style="Anime">Anime</button>
                 <button class="style-button" data-style="Modelo 3D">Modelo 3D</button>
@@ -28,8 +28,18 @@
                 <button class="style-button" data-style="Arte em Pixel">Arte em Pixel</button>
             </div>
             <button id="generateButton">Gerar Imagem</button>
-            <div class="output-area">
+            
+            <!-- NOVA ÁREA DE RESULTADO -->
+            <div id="resultArea" class="output-area hidden">
+                <div id="loader" class="loader-container">
+                    <div class="spinner"></div>
+                    <p>Gerando sua obra de arte...</p>
+                </div>
+                <div id="imageContainer" class="hidden">
+                    <img id="generatedImage" src="" alt="Imagem gerada por IA">
+                </div>
                 <textarea id="outputPrompt" readonly placeholder="Seu prompt profissional aparecerá aqui..."></textarea>
+                <button id="copyButton">Copiar Prompt</button>
             </div>
         </main>
     </div>
