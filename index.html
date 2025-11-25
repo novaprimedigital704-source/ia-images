@@ -1,26 +1,244 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeniusCraft Studio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GERAIS E TEMA ESCURO --- */
+        :root {
+            --background-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #bb86fc;
+            --primary-variant-color: #3700b3;
+            --secondary-color: #03dac6;
+            --text-color: #ffffff;
+            --text-secondary-color: #b3b3b3;
+            --border-color: #333333;
+            --error-color: #cf6679;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- CONTAINER PRINCIPAL --- */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--surface-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        /* --- CABEÇALHO --- */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-text p {
+            font-size: 0.9rem;
+            color: var(--text-secondary-color);
+        }
+
+        /* --- FORMULÁRIO E INPUTS --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary-color);
+        }
+
+        .prompt-input {
+            width: 100%;
+            background-color: #2c2c2c;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.2);
+        }
+
+        /* --- BOTÕES DE ESTILO --- */
+        .style-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .style-button {
+            flex-grow: 1;
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background-color: #333;
+            color: var(--text-secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .style-button:hover {
+            background-color: #444;
+            color: var(--text-color);
+        }
+
+        .style-button.active {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: #000;
+            border-color: transparent;
+            font-weight: 700;
+        }
+
+        /* --- BOTÃO PRINCIPAL (GERAR IMAGEM) --- */
+        .generate-button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #000;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            margin-top: 20px;
+        }
+
+        .generate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(187, 134, 252, 0.3);
+        }
+
+        /* --- ÁREA DE RESULTADO --- */
+        #result-container {
+            margin-top: 24px;
+            display: none; /* Começa escondido */
+        }
+
+        #generated-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            display: none; /* Começa escondido */
+        }
+
+        #prompt-output {
+            width: 100%;
+            background-color: #2c2c2c;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-secondary-color);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            resize: none;
+        }
+
+        .copy-button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #333;
+            color: var(--text-secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .copy-button:hover {
+            background-color: #444;
+        }
+
+        /* --- ANIMAÇÃO DE CARREGAMENTO (LOADER) --- */
+        #loader {
+            display: none; /* Começa escondido */
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        #loader p {
+            font-size: 1rem;
+            color: var(--text-secondary-color);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
-        <header>
-            <img src="logo.svg" alt="Logo GeniusCraft Studio" class="logo">
-            <h1>GeniusCraft Studio</h1>
-            <p>Criação de imagens de IA de elite</p>
-        </header>
+        <div class="header">
+            <img src="logo.svg" alt="Logo GeniusCraft" class="logo">
+            <div class="header-text">
+                <h1>GeniusCraft Studio</h1>
+                <p>Sua vitrine de potencial em IA de elite</p>
+            </div>
+        </div>
 
-        <main>
-            <textarea id="userInput" placeholder="Descreva sua ideia... Ex: um lobo com armadura neon"></textarea>
+        <div class="form-group">
+            <label for="prompt-input">Descreva a imagem que você deseja criar</label>
+            <input type="text" id="prompt-input" class="prompt-input" placeholder="Ex: um dragão dourado em uma montanha de neve">
+        </div>
 
-            <div class="styles-grid">
+        <div class="form-group">
+            <label>Escolha um estilo</label>
+            <div class="style-buttons">
                 <button class="style-button active" data-style="Fotorealista">Fotorealista</button>
                 <button class="style-button" data-style="Arte Fantasia">Arte Fantasia</button>
                 <button class="style-button" data-style="Anime">Anime</button>
@@ -29,104 +247,116 @@
                 <button class="style-button" data-style="Cyberpunk">Cyberpunk</button>
                 <button class="style-button" data-style="Arte em Pixel">Arte em Pixel</button>
             </div>
+        </div>
 
-            <button id="generateButton">Gerar Imagem</button>
+        <button class="generate-button" id="generate-button">Gerar Imagem</button>
 
-            <div id="resultArea" class="output-area hidden">
-                <div id="loader" class="loader-container">
-                    <div class="spinner"></div>
-                    <p>Gerando sua obra de arte...</p>
-                </div>
+        <div id="loader">
+            <div class="spinner"></div>
+            <p>Gerando sua obra-prima...</p>
+        </div>
 
-                <div id="imageContainer" class="hidden">
-                    <img id="generatedImage" src="" alt="Imagem gerada por IA">
-                </div>
-
-                <textarea id="outputPrompt" readonly placeholder="Seu prompt profissional aparecerá aqui..."></textarea>
-                <button id="copyButton">Copiar Prompt</button>
-            </div>
-        </main>
+        <div id="result-container">
+            <img id="generated-image" src="" alt="Imagem gerada por IA">
+            <textarea id="prompt-output" rows="3" readonly></textarea>
+            <button class="copy-button" id="copy-button">Copiar Prompt</button>
+        </div>
     </div>
 
-    <!-- ========================= -->
-    <!--     SCRIPT CORRIGIDO      -->
-    <!-- ========================= -->
-
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const generateButton = document.getElementById('generateButton');
-        const userInput = document.getElementById('userInput');
-        const styleButtons = document.querySelectorAll('.style-button');
-        const resultArea = document.getElementById('resultArea');
-        const loader = document.getElementById('loader');
-        const imageContainer = document.getElementById('imageContainer');
-        const generatedImage = document.getElementById('generatedImage');
-        const outputPrompt = document.getElementById('outputPrompt');
-        const copyButton = document.getElementById('copyButton');
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateButton = document.getElementById('generate-button');
+            const copyButton = document.getElementById('copy-button');
+            const styleButtons = document.querySelectorAll('.style-button');
 
-        let selectedStyle = 'Fotorealista';
-
-        // Escolha dos estilos
-        styleButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                styleButtons.forEach(btn => btn.classList.remove('active'));
-                const clickedButton = event.currentTarget;
-                clickedButton.classList.add('active');
-                selectedStyle = clickedButton.dataset.style;
-            });
-        });
-
-        // Botão de gerar
-        generateButton.addEventListener('click', async () => {
-            const userIdea = userInput.value.trim();
-            if (!userIdea) return alert('Por favor, descreva sua ideia antes de gerar a imagem.');
-
-            const professionalPrompt = masterpiece, best quality, ultra-detailed, ${selectedStyle} style, ${userIdea};
-            outputPrompt.value = professionalPrompt;
-
-            resultArea.classList.remove('hidden');
-            loader.classList.remove('hidden');
-            imageContainer.classList.add('hidden');
-
-            try {
-                const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: professionalPrompt })
+            // Lógica para os botões de estilo
+            styleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    styleButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
                 });
+            });
 
-                // --- Correção obrigatória ---
-                if (!response.ok) {
-                    const errorBody = await response.json().catch(() => ({}));
-                    throw new Error(errorBody.error || "Erro desconhecido no servidor.");
-                }
+            // Lógica para o botão de gerar imagem
+            if (generateButton) {
+                generateButton.addEventListener('click', generateImage);
+            }
 
-                const data = await response.json();
-
-                if (!data.imageUrl) {
-                    throw new Error("O backend não retornou a URL da imagem.");
-                }
-
-                // * CORREÇÃO FINAL *
-                generatedImage.src = data.imageUrl;
-
-                loader.classList.add('hidden');
-                imageContainer.classList.remove('hidden');
-
-            } catch (error) {
-                loader.classList.add('hidden');
-                alert("Falha ao gerar imagem: " + error.message);
+            // Lógica para o botão de copiar
+            if (copyButton) {
+                copyButton.addEventListener('click', () => {
+                    const promptOutput = document.getElementById('prompt-output');
+                    promptOutput.select();
+                    document.execCommand('copy');
+                    copyButton.textContent = 'Copiado!';
+                    setTimeout(() => {
+                        copyButton.textContent = 'Copiar Prompt';
+                    }, 2000);
+                });
             }
         });
 
-        // Copiar prompt
-        copyButton.addEventListener('click', () => {
-            outputPrompt.select();
-            document.execCommand('copy');
-            copyButton.textContent = 'Copiado!';
-            setTimeout(() => { copyButton.textContent = 'Copiar Prompt'; }, 2000);
-        });
-    });
+        function generateImage() {
+            const promptInput = document.getElementById('prompt-input');
+            const promptText = promptInput.value;
+            const activeButtonStyle = document.querySelector('.style-button.active')?.dataset.style || 'estilo padrão';
+
+            if (!promptText) {
+                alert('Por favor, digite um prompt para gerar a imagem.');
+                return;
+            }
+
+            const professionalPrompt = masterpiece, best quality, ultra-detailed, ${activeButtonStyle} style, ${promptText};
+            document.getElementById('prompt-output').value = professionalPrompt;
+
+            const loader = document.getElementById('loader');
+            const resultContainer = document.getElementById('result-container');
+            const imageElement = document.getElementById('generated-image');
+            const generateButton = document.getElementById('generate-button');
+
+            loader.style.display = 'block';
+            generateButton.style.display = 'none'; // Esconde o botão de gerar
+            resultContainer.style.display = 'none';
+            imageElement.style.display = 'none';
+
+            fetch('/api/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt: professionalPrompt }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        // Se o erro for do modelo carregando, mostra uma mensagem específica
+                        if (response.status === 503) {
+                           throw new Error('O modelo de IA está "acordando". Por favor, tente novamente em 30 segundos.');
+                        }
+                        throw new Error(err.error || 'Erro desconhecido no servidor.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.imageUrl) {
+                    imageElement.src = data.imageUrl;
+                    imageElement.style.display = 'block';
+                    resultContainer.style.display = 'block';
+                } else {
+                    throw new Error('A resposta da API não continha uma URL de imagem.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao gerar imagem:', error);
+                resultContainer.innerHTML = <p style="color: var(--error-color); text-align: center; padding: 20px 0;">Falha ao gerar imagem: ${error.message}</p>;
+                resultContainer.style.display = 'block';
+            })
+            .finally(() => {
+                loader.style.display = 'none';
+                generateButton.style.display = 'block'; // Mostra o botão de gerar novamente
+            });
+        }
     </script>
 
 </body>
