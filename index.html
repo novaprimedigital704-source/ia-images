@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeniusCraft Studio</title>
+
     <style>
         :root {
             --background-color: #121212;
@@ -13,9 +14,10 @@
             --text-color: #ffffff;
             --text-secondary-color: #b3b3b3;
             --border-color: #333333;
-            --error-color: #cf6679;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: Arial, sans-serif;
             background-color: var(--background-color);
@@ -26,6 +28,7 @@
             min-height: 100vh;
             padding: 20px;
         }
+
         .container {
             width: 100%;
             max-width: 600px;
@@ -34,8 +37,9 @@
             padding: 24px;
             border: 1px solid var(--border-color);
         }
+
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 24px; }
-        .logo { width: 40px; height: 40px; }
+        .logo { width: 40px; }
         .header-text h1 { font-size: 1.5rem; font-weight: 600; }
         .header-text p { font-size: 0.9rem; color: var(--text-secondary-color); }
 
@@ -108,4 +112,66 @@
             font-family: monospace;
         }
 
+        /* AQUI estava cortado — agora está completo */
         .copy-button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            background-color: #333;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-secondary-color);
+            transition: 0.2s;
+        }
+
+        .copy-button:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="header">
+            <img src="logo.png" class="logo" alt="Logo">
+            <div class="header-text">
+                <h1>GeniusCraft Studio</h1>
+                <p>Gere imagens profissionais com IA</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="userInput">Descreva a ideia da imagem:</label>
+            <textarea id="userInput" class="prompt-input" placeholder="Ex: Um castelo futurista nas nuvens"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Selecione o estilo:</label>
+            <div class="style-buttons">
+                <button class="style-button active" data-style="Fotorealista">Fotorealista</button>
+                <button class="style-button" data-style="Anime">Anime</button>
+                <button class="style-button" data-style="Pintura a óleo">Pintura a óleo</button>
+                <button class="style-button" data-style="Arte Digital">Arte Digital</button>
+            </div>
+        </div>
+
+        <button id="generateButton" class="generate-button">Gerar Imagem</button>
+
+        <div id="loader">
+            <div class="spinner"></div>
+            <p>Gerando imagem...</p>
+        </div>
+
+        <div id="result-container">
+            <img id="generated-image" alt="Imagem gerada">
+            <textarea id="prompt-output" readonly></textarea>
+            <button id="copyButton" class="copy-button">Copiar Prompt</button>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
