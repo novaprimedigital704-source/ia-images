@@ -1,29 +1,22 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GeniusCraft Studio</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeniusCraft Studio</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <div class="logo-container">
-      <img src="logo.png" alt="GeniusCraft Studio" class="logo">
-      <h1>GeniusCraft Studio</h1>
-    </div>
-  </header>
-
-  <main>
-    <div class="dashboard">
-      <textarea id="prompt" placeholder="Digite sua ideia aqui"></textarea>
+  <div class="container">
+    <h1>GeniusCraft Studio</h1>
+    <div class="input-area">
+      <input type="text" id="prompt" placeholder="Digite sua ideia aqui...">
       <button id="generateBtn">Gerar Imagem</button>
-      <div id="result">
-        <img id="generatedImage" src="" alt="">
-      </div>
     </div>
-  </main>
-
-<script src="script.js"></script>
+    <div class="result-area">
+      <img id="resultImage" src="" alt="Sua imagem aparecerá aqui">
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
