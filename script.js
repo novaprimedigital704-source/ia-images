@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. SELEÇÃO DOS ELEMENTOS ---
     const generateButton = document.getElementById('generateButton');
     const userInput = document.getElementById('userInput');
     const styleButtons = document.querySelectorAll('.style-button');
@@ -10,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputPrompt = document.getElementById('outputPrompt');
     const copyButton = document.getElementById('copyButton');
 
-    // --- 2. ESTILO SELECIONADO ---
     let selectedStyle = 'Fotorealista';
 
     styleButtons.forEach(button => {
@@ -22,13 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 3. GERAR IMAGEM VIA SUA API ---
     generateButton.addEventListener('click', async () => {
         const userIdea = userInput.value.trim();
-        if (!userIdea) {
-            alert('Por favor, descreva sua ideia antes de gerar a imagem.');
-            return;
-        }
+        if (!userIdea) return alert('Por favor, descreva sua ideia antes de gerar a imagem.');
 
         const professionalPrompt = `masterpiece, best quality, ultra-detailed, ${selectedStyle} style, ${userIdea}`;
         outputPrompt.value = professionalPrompt;
@@ -45,12 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-
             if (data.error) throw new Error(data.error);
 
-            // Usa a URL retornada pela sua API
             generatedImage.src = data.imageUrl;
-
             loader.classList.add('hidden');
             imageContainer.classList.remove('hidden');
         } catch (error) {
@@ -59,13 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 4. COPIAR PROMPT ---
     copyButton.addEventListener('click', () => {
         outputPrompt.select();
         document.execCommand('copy');
         copyButton.textContent = 'Copiado!';
-        setTimeout(() => {
-            copyButton.textContent = 'Copiar Prompt';
-        }, 2000);
+        setTimeout(() => { copyButton.textContent = 'Copiar Prompt'; }, 2000);
     });
 });
