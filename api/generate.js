@@ -16,8 +16,8 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: "HUGGINGFACE_TOKEN não configurado." });
         }
 
-        // Modelo pode ser alterado (diffusion, flux etc.)
-        const MODEL = "black-forest-labs/FLUX.1-schnell";
+        // 🔥 Modelo estável e compatível
+        const MODEL = "stabilityai/sdxl-turbo";
 
         const response = await fetch(
             `https://api-inference.huggingface.co/models/${MODEL}`,
@@ -33,11 +33,11 @@ export default async function handler(req, res) {
             }
         );
 
-        // buffer da imagem
+        // Recebe imagem como bytes
         const arrayBuffer = await response.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        // converte para base64
+        // Converte para base64
         const base64 = buffer.toString("base64");
 
         return res.status(200).json({
