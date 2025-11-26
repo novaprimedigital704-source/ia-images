@@ -1,11 +1,6 @@
 // api/generate.js
-import Stripe from "stripe";
 import redis from "../lib/redis.js";
 import { Buffer } from "buffer";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2022-11-15",
-});
 
 // Domínios descartáveis
 const disposableDomains = new Set([
@@ -28,33 +23,21 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Método não permitido." });
 
   try {
-    const { prompt, options, session_id } = req.body || {};
+    const { prompt, email, options } = req.body || {};
 
-    if (!prompt || !session_id)
-      return res.status(400).json({ error: "prompt e session_id são obrigatórios." });
-
-    // 📌 1. Validar sessão real do Stripe (identidade segura)
-    let session;
-    try {
-      session = await stripe.checkout.sessions.retrieve(session_id);
-    } catch {
-      return res.status(400).json({ error: "session_id inválido." });
-    }
-
-    const email = session.customer_details?.email;
-    if (!email)
-      return res.status(400).json({ error: "Não foi possível obter email do Stripe." });
+    if (!prompt || !email)
+      return res.status(400).json({ error: "prompt e email são obrigatórios." });
 
     const userEmail = email.toLowerCase();
 
-    // 🚫 2. Bloquear email descartável
+    // 🚫 Bloquear email descartável
     if (isDisposableEmail(userEmail)) {
       return res.status(403).json({
-        error: "Emails descartáveis não são permitidos para geração de imagens."
+        error: "Emails descartáveis não são permitidos nesta plataforma."
       });
     }
 
-    // 📌 3. Buscar créditos do usuário
+    // 📌 Buscar créditos
     const key = `credits:email:${userEmail}`;
     let credits = Number((await redis.get(key)) || 0);
 
@@ -70,7 +53,7 @@ export default async function handler(req, res) {
     if (!HF_TOKEN)
       return res.status(500).json({ error: "HUGGINGFACE_TOKEN não configurado." });
 
-    // 📌 4. Payload da IA
+    // Payload da IA
     const payload = {
       inputs: prompt,
       parameters: {
@@ -84,7 +67,7 @@ export default async function handler(req, res) {
       },
     };
 
-    // 📌 5. Enviar para HuggingFace
+    // Enviar para the HuggingFace Inference
     const hfRes = await fetch(
       `https://router.huggingface.co/hf-inference/models/${MODEL}`,
       {
@@ -109,11 +92,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Erro da HuggingFace: " + txt });
     }
 
-    // 📌 6. Converter imagem
+    // Converter imagem
     const arrayBuffer = await hfRes.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
 
-    // 📌 7. Descontar crédito
+    // Descontar crédito
     await redis.set(key, String(credits - 1));
 
     return res.status(200).json({
