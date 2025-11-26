@@ -22,13 +22,14 @@ function isDisposableEmail(email) {
 
 export default async function handler(req, res) {
   try {
-    const { session_id } = req.body || {};
+    // 🔥 Corrigido: agora aceita body OU query
+    const session_id = req.body?.session_id || req.query?.session_id;
 
     if (!session_id) {
       return res.status(400).json({ error: "session_id é obrigatório." });
     }
 
-    // 🔒 Valida sessão real no Stripe
+    // Validar sessão no Stripe
     let session;
     try {
       session = await stripe.checkout.sessions.retrieve(session_id);
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
 
     const normalizedEmail = email.toLowerCase();
 
-    // 🚫 Anti-fraude: bloquear emails descartáveis
+    // Anti-fraude: bloquear e-mails descartáveis
     if (isDisposableEmail(normalizedEmail)) {
       return res.status(403).json({
         error: "Emails descartáveis não são permitidos nesta plataforma."
@@ -56,17 +57,15 @@ export default async function handler(req, res) {
 
     // Consultar créditos
     let credits = await redis.get(creditsKey);
-
-    // Consultar se já recebeu bônus inicial
     const alreadyGotBonus = await redis.get(bonusKey);
 
     if (credits === null) {
       credits = 0;
     }
 
-    // Conceder bônus inicial APENAS 1 VEZ
+    // Conceder bônus inicial apenas 1 vez
     if (!alreadyGotBonus) {
-      credits += 10; // bônus inicial
+      credits += 10;
       await redis.set(bonusKey, "true");
     }
 
@@ -74,7 +73,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       email: normalizedEmail,
-      credits
+      credits,
     });
 
   } catch (err) {
