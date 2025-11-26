@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const res = await fetch("/api/credits", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ session_id: "__fake__", email })
+            body: JSON.stringify({ email })
         });
 
         const data = await res.json();
@@ -89,11 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
         credits = data.credits;
         creditInfo.textContent = `Créditos: ${credits}`;
 
-        // Se ficar sem créditos → scroll
         if (credits <= 0) {
             generateButton.disabled = true;
             generateButton.textContent = "Sem créditos - Comprar plano";
-
             setTimeout(() => {
                 document.getElementById("plans").scrollIntoView({ behavior: "smooth" });
             }, 800);
@@ -110,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // BOTÕES DE COMPRA
     buyButtons.forEach(btn => {
         btn.addEventListener("click", async () => {
-            const plan = btn.dataset.plan;
+            const priceId = btn.dataset.price; // CORRIGIDO
             const email = userEmailInput.value.trim();
 
             if (!email) return alert("Digite seu email para comprar.");
@@ -118,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("/api/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ plan, email })
+                body: JSON.stringify({ priceId, email })
             });
 
             const data = await res.json();
