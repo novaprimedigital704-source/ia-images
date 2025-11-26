@@ -11,6 +11,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let selectedStyle = 'Fotorealista';
 
+    // -----------------------------
+    // 1) PEGAR SESSION_ID DA URL
+    // -----------------------------
+    const urlParams = new URLSearchParams(window.location.search);
+    const session_id = urlParams.get("session_id");
+
+    if (!session_id) {
+        alert("Erro: session_id não encontrado. Você veio da página de pagamento?");
+        return;
+    }
+
+    // -----------------------------
+    // 2) BUSCAR CRÉDITOS DO USUÁRIO
+    // -----------------------------
+    async function loadCredits() {
+        try {
+            const res = await fetch(`/api/credits?session_id=${session_id}`);
+            const data = await res.json();
+            console.log("Créditos:", data);
+        } catch (e) {
+            console.error("Erro ao carregar créditos:", e);
+        }
+    }
+
+    loadCredits();
+
     // Seleção de estilos
     styleButtons.forEach(button => {
         button.addEventListener('click', event => {
@@ -40,7 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: professionalPrompt })
+                body: JSON.stringify({
+                    prompt: professionalPrompt,
+                    session_id
+                })
             });
 
             const data = await response.json();
@@ -49,8 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.error);
             }
 
-            // 🔥 AQUI ESTÁ O AJUSTE IMPORTANTE:
-            // Agora o backend envia base64, então é só aplicar:
             generatedImage.src = data.imageUrl;
 
             loader.classList.add('hidden');
