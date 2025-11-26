@@ -1,64 +1,86 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GeniusCraft Studio</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <header>
-            <img src="logo.png" class="logo" alt="Logo">
-            <h1>GeniusCraft Studio</h1>
-            <p>Crie imagens profissionais usando IA</p>
-        </header>
+    <header>
+        <img src="logo.png" class="logo" alt="Logo" />
+        <h1>GeniusCraft Studio</h1>
+        <p>Crie imagens profissionais usando IA</p>
+    </header>
 
-        <!-- 🔥 Caixa de créditos -->
-        <div id="creditsBox" class="credits-box">Carregando créditos...</div>
+    <!-- EMAIL FIXO PARA CONTAGEM DE CRÉDITOS -->
+    <input type="email" id="userEmail" placeholder="Digite seu email para usar a IA">
 
-        <!-- Entrada do usuário -->
-        <textarea id="userInput" placeholder="Descreva sua ideia aqui..."></textarea>
+    <p id="creditInfo" class="credit-info">Créditos: --</p>
 
-        <!-- Botões de estilo -->
-        <div class="styles-grid">
-            <button class="style-button active" data-style="Fotorealista">Fotorealista</button>
-            <button class="style-button" data-style="Anime">Anime</button>
-            <button class="style-button" data-style="Pintura a óleo">Pintura a Óleo</button>
-            <button class="style-button" data-style="Arte Digital">Arte Digital</button>
+    <!-- Entrada do usuário -->
+    <textarea id="userInput" placeholder="Descreva sua ideia aqui..."></textarea>
+
+    <!-- Botões de estilo -->
+    <div class="styles-grid">
+        <button class="style-button active" data-style="Fotorealista">Fotorealista</button>
+        <button class="style-button" data-style="Anime">Anime</button>
+        <button class="style-button" data-style="Pintura a óleo">Pintura a Óleo</button>
+        <button class="style-button" data-style="Arte Digital">Arte Digital</button>
+    </div>
+
+    <!-- Botão para gerar -->
+    <button id="generateButton">Gerar Imagem</button>
+
+    <!-- Área de resultado -->
+    <div id="resultArea" class="output-area hidden">
+        <div id="loader" class="loader-container hidden">
+            <div class="spinner"></div>
+            <p>Gerando imagem...</p>
         </div>
 
-        <!-- Botão para gerar -->
-        <button id="generateButton">Gerar Imagem</button>
+        <div id="imageContainer" class="hidden">
+            <img id="generatedImage" alt="Imagem gerada" />
+        </div>
 
-        <!-- Área de resultado -->
-        <div id="resultArea" class="output-area hidden">
+        <textarea id="outputPrompt" readonly></textarea>
+        <button id="copyButton">Copiar Prompt</button>
+    </div>
 
-            <!-- Loader -->
-            <div id="loader" class="loader-container hidden">
-                <div class="spinner"></div>
-                <p>Gerando imagem...</p>
-            </div>
+    <!-- ============================= -->
+    <!-- SEÇÃO DE PLANOS -->
+    <!-- ============================= -->
+    <h2 class="pricing-title">Planos disponíveis</h2>
 
-            <!-- Container da imagem -->
-            <div id="imageContainer" class="hidden">
-                <img id="generatedImage" alt="Imagem gerada">
-            </div>
+    <div id="plans" class="plans-container">
 
-            <!-- Prompt gerado -->
-            <textarea id="outputPrompt" readonly></textarea>
+        <div class="plan-card">
+            <h3>Basic</h3>
+            <p class="credits">100 créditos</p>
+            <button class="buy-button" data-plan="basic">Comprar Basic</button>
+        </div>
 
-            <!-- Botão copiar -->
-            <button id="copyButton">Copiar Prompt</button>
+        <div class="plan-card">
+            <h3>Pro</h3>
+            <p class="credits">500 créditos</p>
+            <button class="buy-button" data-plan="pro">Comprar Pro</button>
+        </div>
 
+        <div class="plan-card">
+            <h3>Studio</h3>
+            <p class="credits">1500 créditos</p>
+            <button class="buy-button" data-plan="studio">Comprar Studio</button>
         </div>
 
     </div>
 
-    <script src="script.js"></script>
+</div>
+
+<script src="script.js"></script>
 
 </body>
 </html>
