@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Buscar créditos
+    // Buscar créditos do usuário
     async function loadCredits() {
         const email = userEmailInput.value.trim();
         if (!email) return;
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     userEmailInput.addEventListener("input", loadCredits);
 
-    // CLICK NO BOTÃO DE GERAR
+    // GERAR IMAGEM
     generateButton.addEventListener("click", async () => {
         if (credits <= 0) {
             document.getElementById("plans").scrollIntoView({ behavior: "smooth" });
@@ -60,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("outputPrompt").value = professional;
 
-        // Mostra loader
         document.getElementById("resultArea").classList.remove("hidden");
         document.getElementById("loader").classList.remove("hidden");
         document.getElementById("imageContainer").classList.add("hidden");
@@ -75,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = await response.json();
 
-        // Oculta loader
         document.getElementById("loader").classList.add("hidden");
 
         if (data.error) {
@@ -98,17 +96,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // COPIAR PROMPT
+    // Copiar prompt
     document.getElementById("copyButton").addEventListener("click", () => {
         const text = document.getElementById("outputPrompt");
         text.select();
         document.execCommand("copy");
     });
 
-    // BOTÕES DE COMPRA
+    // BOTÕES DE COMPRA - CORRIGIDO
     buyButtons.forEach(btn => {
         btn.addEventListener("click", async () => {
-            const priceId = btn.dataset.price; // CORRIGIDO
+            const plan = btn.dataset.plan; // <-- AGORA FUNCIONA!
             const email = userEmailInput.value.trim();
 
             if (!email) return alert("Digite seu email para comprar.");
@@ -116,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("/api/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ priceId, email })
+                body: JSON.stringify({ plan, email }) // <-- COMPATÍVEL COM O BACKEND
             });
 
             const data = await res.json();
