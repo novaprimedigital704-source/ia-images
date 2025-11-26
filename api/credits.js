@@ -3,7 +3,9 @@ import redis from "../lib/redis.js";
 
 export default async function handler(req, res) {
   try {
-    const { email } = req.body || req.query || {};
+    const email =
+      (req.body && req.body.email) ||
+      (req.query && req.query.email);
 
     if (!email || typeof email !== "string") {
       return res.status(400).json({ error: "Email é obrigatório." });
@@ -11,11 +13,11 @@ export default async function handler(req, res) {
 
     const key = `credits:email:${email.toLowerCase()}`;
 
-    // Sempre volta string ou null
     let credits = await redis.get(key);
 
     if (credits === null) {
-      credits = "10";  // Crédito inicial grátis
+      // Créditos iniciais apenas uma vez
+      credits = "10";
       await redis.set(key, credits);
     }
 
