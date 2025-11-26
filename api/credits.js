@@ -10,10 +10,12 @@ export default async function handler(req, res) {
     }
 
     const key = `credits:email:${email.toLowerCase()}`;
+
+    // Sempre volta string ou null
     let credits = await redis.get(key);
 
     if (credits === null) {
-      credits = 10; // crédito inicial grátis
+      credits = "10";  // Crédito inicial grátis
       await redis.set(key, credits);
     }
 
