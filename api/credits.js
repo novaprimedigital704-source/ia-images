@@ -1,10 +1,5 @@
 // api/credits.js
-import Stripe from "stripe";
 import redis from "../lib/redis.js";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2022-11-15",
-});
 
 // Domínios descartáveis conhecidos
 const disposableDomains = new Set([
@@ -22,25 +17,10 @@ function isDisposableEmail(email) {
 
 export default async function handler(req, res) {
   try {
-    // 🔥 Corrigido: agora aceita body OU query
-    const session_id = req.body?.session_id || req.query?.session_id;
-
-    if (!session_id) {
-      return res.status(400).json({ error: "session_id é obrigatório." });
-    }
-
-    // Validar sessão no Stripe
-    let session;
-    try {
-      session = await stripe.checkout.sessions.retrieve(session_id);
-    } catch (err) {
-      return res.status(400).json({ error: "session_id inválido." });
-    }
-
-    const email = session.customer_details?.email;
+    const email = req.body?.email || req.query?.email;
 
     if (!email) {
-      return res.status(400).json({ error: "Não foi possível obter email do Stripe." });
+      return res.status(400).json({ error: "Email é obrigatório." });
     }
 
     const normalizedEmail = email.toLowerCase();
@@ -55,15 +35,12 @@ export default async function handler(req, res) {
     const creditsKey = `credits:email:${normalizedEmail}`;
     const bonusKey = `initial_bonus_given:${normalizedEmail}`;
 
-    // Consultar créditos
     let credits = await redis.get(creditsKey);
     const alreadyGotBonus = await redis.get(bonusKey);
 
-    if (credits === null) {
-      credits = 0;
-    }
+    if (credits === null) credits = 0;
 
-    // Conceder bônus inicial apenas 1 vez
+    // Adiciona 10 créditos apenas 1 vez
     if (!alreadyGotBonus) {
       credits += 10;
       await redis.set(bonusKey, "true");
