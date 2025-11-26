@@ -1,116 +1,133 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const generateButton = document.getElementById('generateButton');
-    const userInput = document.getElementById('userInput');
-    const styleButtons = document.querySelectorAll('.style-button');
-    const resultArea = document.getElementById('resultArea');
-    const loader = document.getElementById('loader');
-    const imageContainer = document.getElementById('imageContainer');
-    const generatedImage = document.getElementById('generatedImage');
-    const outputPrompt = document.getElementById('outputPrompt');
-    const copyButton = document.getElementById('copyButton');
-    const creditsBox = document.getElementById('creditsBox');
+document.addEventListener("DOMContentLoaded", () => {
+    const userEmailInput = document.getElementById("userEmail");
+    const creditInfo = document.getElementById("creditInfo");
+    const generateButton = document.getElementById("generateButton");
+    const buyButtons = document.querySelectorAll(".buy-button");
 
-    let selectedStyle = 'Fotorealista';
+    let credits = 0;
+    let selectedStyle = "Fotorealista";
 
-    // -----------------------------
-    // 1) PEGAR SESSION_ID DA URL
-    // -----------------------------
-    const urlParams = new URLSearchParams(window.location.search);
-    const session_id = urlParams.get("session_id");
-
-    if (!session_id) {
-        creditsBox.textContent = "Erro: session_id ausente";
-        return;
-    }
-
-    // -----------------------------
-    // 2) BUSCAR CRÉDITOS DO USUÁRIO
-    // -----------------------------
-    async function loadCredits() {
-        try {
-            const res = await fetch(`/api/credits?session_id=${session_id}`);
-            const data = await res.json();
-
-            if (data.error) {
-                creditsBox.textContent = "Erro: " + data.error;
-                return;
-            }
-
-            creditsBox.textContent = `Créditos: ${data.credits}`;
-            return data.credits;
-
-        } catch (e) {
-            creditsBox.textContent = "Erro ao carregar créditos";
-        }
-    }
-
-    loadCredits();
-
-    // Seleção de estilos
+    // Seleção de estilo
+    const styleButtons = document.querySelectorAll(".style-button");
     styleButtons.forEach(button => {
-        button.addEventListener('click', event => {
-            styleButtons.forEach(btn => btn.classList.remove('active'));
-            const clickedButton = event.currentTarget;
-            clickedButton.classList.add('active');
-            selectedStyle = clickedButton.dataset.style;
+        button.addEventListener("click", e => {
+            styleButtons.forEach(b => b.classList.remove("active"));
+            e.target.classList.add("active");
+            selectedStyle = e.target.dataset.style;
         });
     });
 
-    // -----------------------------
-    // GERAR IMAGEM
-    // -----------------------------
-    generateButton.addEventListener('click', async () => {
-        const userIdea = userInput.value.trim();
-        if (!userIdea)
-            return alert('Por favor, descreva sua ideia antes de gerar a imagem.');
+    // Buscar créditos
+    async function loadCredits() {
+        const email = userEmailInput.value.trim();
+        if (!email) return;
 
-        const professionalPrompt =
-            `masterpiece, best quality, ultra-detailed, ${selectedStyle} style, ${userIdea}`;
+        const res = await fetch("/api/credits", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ session_id: "__fake__", email })
+        });
 
-        outputPrompt.value = professionalPrompt;
+        const data = await res.json();
+        credits = data.credits;
 
-        resultArea.classList.remove('hidden');
-        loader.classList.remove('hidden');
-        imageContainer.classList.add('hidden');
+        creditInfo.textContent = `Créditos: ${credits}`;
 
-        try {
-            const response = await fetch('/api/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    prompt: professionalPrompt,
-                    session_id
-                })
-            });
+        if (credits <= 0) {
+            generateButton.disabled = true;
+            generateButton.textContent = "Sem créditos - Comprar plano";
+            generateButton.classList.add("no-credits");
+        } else {
+            generateButton.disabled = false;
+            generateButton.textContent = "Gerar Imagem";
+            generateButton.classList.remove("no-credits");
+        }
+    }
 
-            const data = await response.json();
+    userEmailInput.addEventListener("input", loadCredits);
 
-            if (data.error) {
-                loader.classList.add('hidden');
-                return alert(data.error);
-            }
+    // CLICK NO BOTÃO DE GERAR
+    generateButton.addEventListener("click", async () => {
+        if (credits <= 0) {
+            document.getElementById("plans").scrollIntoView({ behavior: "smooth" });
+            return;
+        }
 
-            generatedImage.src = data.imageUrl;
+        const prompt = document.getElementById("userInput").value.trim();
+        if (!prompt) return alert("Digite uma ideia.");
 
-            loader.classList.add('hidden');
-            imageContainer.classList.remove('hidden');
+        const professional = `masterpiece, ultra detailed, ${selectedStyle}, ${prompt}`;
 
-            // Atualizar créditos imediatamente
-            creditsBox.textContent = `Créditos: ${data.credits}`;
+        document.getElementById("outputPrompt").value = professional;
 
-        } catch (error) {
-            loader.classList.add('hidden');
-            alert('Erro ao gerar a imagem: ' + error.message);
+        // Mostra loader
+        document.getElementById("resultArea").classList.remove("hidden");
+        document.getElementById("loader").classList.remove("hidden");
+        document.getElementById("imageContainer").classList.add("hidden");
+
+        const email = userEmailInput.value.trim();
+
+        const response = await fetch("/api/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: professional, email })
+        });
+
+        const data = await response.json();
+
+        // Oculta loader
+        document.getElementById("loader").classList.add("hidden");
+
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        document.getElementById("generatedImage").src = data.imageUrl;
+        document.getElementById("imageContainer").classList.remove("hidden");
+
+        credits = data.credits;
+        creditInfo.textContent = `Créditos: ${credits}`;
+
+        // Se ficar sem créditos → scroll
+        if (credits <= 0) {
+            generateButton.disabled = true;
+            generateButton.textContent = "Sem créditos - Comprar plano";
+
+            setTimeout(() => {
+                document.getElementById("plans").scrollIntoView({ behavior: "smooth" });
+            }, 800);
         }
     });
 
-    // Copiar prompt
-    copyButton.addEventListener('click', () => {
-        outputPrompt.select();
-        document.execCommand('copy');
-        copyButton.textContent = 'Copiado!';
-        setTimeout(() => {
-            copyButton.textContent = 'Copiar Prompt';
-        }, 2000);
+    // COPIAR PROMPT
+    document.getElementById("copyButton").addEventListener("click", () => {
+        const text = document.getElementById("outputPrompt");
+        text.select();
+        document.execCommand("copy");
+    });
+
+    // BOTÕES DE COMPRA
+    buyButtons.forEach(btn => {
+        btn.addEventListener("click", async () => {
+            const plan = btn.dataset.plan;
+            const email = userEmailInput.value.trim();
+
+            if (!email) return alert("Digite seu email para comprar.");
+
+            const res = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ plan, email })
+            });
+
+            const data = await res.json();
+
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert("Erro: " + data.error);
+            }
+        });
     });
 });
