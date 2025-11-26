@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const generatedImage = document.getElementById('generatedImage');
     const outputPrompt = document.getElementById('outputPrompt');
     const copyButton = document.getElementById('copyButton');
+    const creditsBox = document.getElementById('creditsBox');
 
     let selectedStyle = 'Fotorealista';
 
@@ -18,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const session_id = urlParams.get("session_id");
 
     if (!session_id) {
-        alert("Erro: session_id não encontrado. Você veio da página de pagamento?");
+        creditsBox.textContent = "Erro: session_id ausente";
         return;
     }
 
@@ -29,9 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch(`/api/credits?session_id=${session_id}`);
             const data = await res.json();
-            console.log("Créditos:", data);
+
+            if (data.error) {
+                creditsBox.textContent = "Erro: " + data.error;
+                return;
+            }
+
+            creditsBox.textContent = `Créditos: ${data.credits}`;
+            return data.credits;
+
         } catch (e) {
-            console.error("Erro ao carregar créditos:", e);
+            creditsBox.textContent = "Erro ao carregar créditos";
         }
     }
 
@@ -55,7 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!userIdea)
             return alert('Por favor, descreva sua ideia antes de gerar a imagem.');
 
-        const professionalPrompt = `masterpiece, best quality, ultra-detailed, ${selectedStyle} style, ${userIdea}`;
+        const professionalPrompt =
+            `masterpiece, best quality, ultra-detailed, ${selectedStyle} style, ${userIdea}`;
+
         outputPrompt.value = professionalPrompt;
 
         resultArea.classList.remove('hidden');
@@ -75,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.error) {
-                throw new Error(data.error);
+                loader.classList.add('hidden');
+                return alert(data.error);
             }
 
             generatedImage.src = data.imageUrl;
@@ -83,13 +95,16 @@ document.addEventListener('DOMContentLoaded', () => {
             loader.classList.add('hidden');
             imageContainer.classList.remove('hidden');
 
+            // Atualizar créditos imediatamente
+            creditsBox.textContent = `Créditos: ${data.credits}`;
+
         } catch (error) {
             loader.classList.add('hidden');
             alert('Erro ao gerar a imagem: ' + error.message);
         }
     });
 
-    // COPIAR PROMPT
+    // Copiar prompt
     copyButton.addEventListener('click', () => {
         outputPrompt.select();
         document.execCommand('copy');
