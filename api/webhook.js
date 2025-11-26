@@ -29,44 +29,51 @@ export default async function handler(req, res) {
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Eventos que nos interessam:
+    // Evento de checkout concluído
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const email = session.customer_email;
-      // Você pode adicionar créditos iniciais no primeiro pagamento (opcional)
-      // Aqui, nós aguardamos invoice.paid para créditos mensais.
       console.log("checkout.session.completed for", email);
     }
 
+    // Evento de pagamento da fatura (renovação mensal bem-sucedida)
     if (event.type === "invoice.paid") {
       const invoice = event.data.object;
-      // Pegar o price id do primeiro line item
-      const priceId = invoice.lines?.data?.[0]?.price?.id;
-      // obter email; invoice may not contain customer_email, buscar via customer if needed
+
+      // Price ID
+      const priceId = invoice?.lines?.data?.[0]?.price?.id || null;
+
+      // Email
       let email = invoice.customer_email;
+
       if (!email && invoice.customer) {
-        const cus = await stripe.customers.retrieve(invoice.customer);
-        email = cus.email;
+        const customer = await stripe.customers.retrieve(invoice.customer);
+        email = customer.email;
       }
+
       if (!email) {
-        console.warn("invoice.paid without email, skipping");
+        console.warn("invoice.paid event sem email, ignorando");
       } else {
         let creditsToAdd = 0;
+
         if (priceId === process.env.STRIPE_PRICE_BASIC) creditsToAdd = 100;
         if (priceId === process.env.STRIPE_PRICE_PRO) creditsToAdd = 500;
         if (priceId === process.env.STRIPE_PRICE_STUDIO) creditsToAdd = 1500;
 
         const key = `credits:email:${email.toLowerCase()}`;
+
         const current = Number((await redis.get(key)) || 0);
-        await redis.set(key, current + creditsToAdd);
+
+        await redis.set(key, String(current + creditsToAdd));
+
         console.log(`Added ${creditsToAdd} credits to ${email}`);
       }
     }
 
-    // Retorne 200 para Stripe
-    res.status(200).json({ received: true });
+    return res.status(200).json({ received: true });
+
   } catch (err) {
     console.error("webhook error:", err);
-    res.status(500).send(`Webhook handler error: ${err.message}`);
+    return res.status(500).send(`Webhook handler error: ${err.message}`);
   }
 }
