@@ -29,21 +29,35 @@ export default async function handler(req, res) {
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Evento de checkout concluído
+    // 🎉 EVENTO: Compra concluída
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-      const email = session.customer_email;
-      console.log("checkout.session.completed for", email);
+      console.log("✔ checkout.session.completed:", session.customer_email);
     }
 
-    // Evento de pagamento da fatura (renovação mensal bem-sucedida)
+    // 💰 EVENTO: Fatura paga (inclui compra e renovação)
     if (event.type === "invoice.paid") {
       const invoice = event.data.object;
 
-      // Price ID
-      const priceId = invoice?.lines?.data?.[0]?.price?.id || null;
+      const priceId = invoice?.lines?.data?.[0]?.price?.id;
 
-      // Email
+      // Preço / plano do Stripe
+      const BASIC = process.env.STRIPE_BASIC_PLAN_ID;
+      const PRO = process.env.STRIPE_PRO_PLAN_ID;
+      const STUDIO = process.env.STRIPE_STUDIO_PLAN_ID;
+
+      let creditsToAdd = 0;
+
+      if (priceId === BASIC) creditsToAdd = 100;
+      if (priceId === PRO) creditsToAdd = 500;
+      if (priceId === STUDIO) creditsToAdd = 1500;
+
+      if (creditsToAdd === 0) {
+        console.log("⚠ invoice.paid ignorado (priceId não encontrado)", priceId);
+        return res.status(200).json({ ignored: true });
+      }
+
+      // Email do cliente
       let email = invoice.customer_email;
 
       if (!email && invoice.customer) {
@@ -52,22 +66,18 @@ export default async function handler(req, res) {
       }
 
       if (!email) {
-        console.warn("invoice.paid event sem email, ignorando");
-      } else {
-        let creditsToAdd = 0;
-
-        if (priceId === process.env.STRIPE_PRICE_BASIC) creditsToAdd = 100;
-        if (priceId === process.env.STRIPE_PRICE_PRO) creditsToAdd = 500;
-        if (priceId === process.env.STRIPE_PRICE_STUDIO) creditsToAdd = 1500;
-
-        const key = `credits:email:${email.toLowerCase()}`;
-
-        const current = Number((await redis.get(key)) || 0);
-
-        await redis.set(key, String(current + creditsToAdd));
-
-        console.log(`Added ${creditsToAdd} credits to ${email}`);
+        console.log("⚠ invoice.paid sem email, ignorado.");
+        return res.status(200).json({ ignored: true });
       }
+
+      email = email.toLowerCase();
+
+      const key = `credits:email:${email}`;
+      const currentCredits = Number((await redis.get(key)) || 0);
+
+      await redis.set(key, String(currentCredits + creditsToAdd));
+
+      console.log(`✅ +${creditsToAdd} créditos adicionados para ${email}`);
     }
 
     return res.status(200).json({ received: true });
